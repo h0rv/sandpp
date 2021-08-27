@@ -111,12 +111,12 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
             }
         }
 
+        updateSand();
         frameTime += deltaTime;
         if (frameTime >= .05f){
             frameTime = 0;
             drawRendererBackground(renderer);
 
-            updateSand();
             drawSand(renderer);
             SDL_RenderPresent(renderer);
             SDL_SetRenderDrawColor(renderer, bg.R, bg.G, bg.B, 255);
@@ -124,6 +124,7 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
         }
     }
 }
+
 
 void drawSand(SDL_Renderer *renderer) {
     sand currSand;
