@@ -76,7 +76,7 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
                 case SDL_MOUSEMOTION:
                     mouseX = (int)event.button.x;
                     mouseY = (int)event.button.y;
-                    cout << mouseX << "\t" << mouseY << endl;
+                    // cout << mouseX << "\t" << mouseY << endl;
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     isLeftMouseDown = checkMouseButtonDown(event.button.button);
@@ -111,12 +111,12 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
             }
         }
 
-        updateSand();
         frameTime += deltaTime;
-        if (frameTime >= .05f){
+        if (frameTime >= .025f){
             frameTime = 0;
             drawRendererBackground(renderer);
 
+            updateSand();
             drawSand(renderer);
             SDL_RenderPresent(renderer);
             SDL_SetRenderDrawColor(renderer, bg.R, bg.G, bg.B, 255);
