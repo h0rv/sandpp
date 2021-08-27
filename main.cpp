@@ -53,7 +53,6 @@ bool checkMouseButtonDown(char button) {
 
 
 void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
-    SDL_SetRenderDrawColor(renderer, 62, 44, 65, 255);
     int mouseX = 0, mouseY = 0;
     float frameTime = 0, deltaTime = 0;
     int prevTime = 0, currTime = 0;
