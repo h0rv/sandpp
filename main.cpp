@@ -11,11 +11,10 @@ bool createNewSand(int x, int y, Color *c);
 void updateSand();
 void drawSand(SDL_Renderer *renderer);
 void drawRendererBackground(SDL_Renderer *renderer);
-void printScreen();
 
 
 // Screen array
-sand screen[rows][cols]; 
+sand screen[cols][rows]; 
 
 
 void checkKeyDown(SDL_Keycode key) {
@@ -77,7 +76,7 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
                 case SDL_MOUSEMOTION:
                     mouseX = (int)event.button.x;
                     mouseY = (int)event.button.y;
-                    // cout << mouseX << "\t" << mouseY << endl;
+                    cout << mouseX << "\t" << mouseY << endl;
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     isLeftMouseDown = checkMouseButtonDown(event.button.button);
@@ -113,13 +112,12 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
         }
 
         frameTime += deltaTime;
-        if (frameTime >= 0.25f){
+        if (frameTime >= .05f){
             frameTime = 0;
             drawRendererBackground(renderer);
-            // printScreen();
+
             updateSand();
             drawSand(renderer);
-            // SDL_RenderClear(renderer);
             SDL_RenderPresent(renderer);
             SDL_SetRenderDrawColor(renderer, bg.R, bg.G, bg.B, 255);
             SDL_RenderDrawRect(renderer, NULL);
@@ -127,21 +125,10 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
     }
 }
 
-void printScreen() {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (screen[i][j].isActive) {
-                cout << i << j;
-            }
-            cout << endl;
-        }
-    }
-}
-
 void drawSand(SDL_Renderer *renderer) {
     sand currSand;
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+    for (int i = 0; i < cols; i++) {
+        for (int j = 0; j < rows; j++) {
             if (screen[i][j].isActive) {
                 sand currSand = screen[i][j];
                 SDL_SetRenderDrawColor(renderer, currSand.color->R, currSand.color->G, currSand.color->B, 255);
@@ -153,25 +140,26 @@ void drawSand(SDL_Renderer *renderer) {
 
 
 void updateSand() {
-    for (int x = 0; x < rows; x++) {
-        for (int y = 0; y < cols; y++) {
-            sand currSand = screen[x][y];
+    for (int i = cols-1; i >= 0; i--) {
+        for (int j = rows-1; j >= 0; j--) {
+            sand currSand = screen[i][j];
             // no sand at current location
             if (!currSand.isActive) continue;
             // if no sand below, go down
-            else if (y+1 < rows && !screen[x][y+1].isActive) { // TODO
-                screen[x][y+1] = sand(screen[x][y]);
-                screen[x][y].isActive = false;
+            // else if (j+1 < cols && !screen[i][j+1].isActive) { // TODO
+            else if (j+1 < rows && !screen[i][j+1].isActive) { // TODO
+                screen[i][j+1] = sand(currSand);
+                screen[i][j].isActive = false;
             }
             // else if no sand left diagonal, go there
-            else if (x-1 >= 0 && y+1 < rows && !screen[x-1][y+1].isActive) { // TODO
-                screen[x-1][y+1] = sand(screen[x][y]);
-                screen[x][y].isActive = false;
+            else if (0 < i-1 && j+1 < rows && !screen[i-1][j+1].isActive) { // TODO
+                screen[i-1][j+1] = sand(currSand);
+                screen[i][j].isActive = false;
             }
             // else if no sand right diagonal, go there
-            else if (x+1 < cols && y+1 < rows && !screen[x+1][y+1].isActive) { // TODO
-                screen[x+1][y+1] = sand(screen[x][y]);
-                screen[x][y].isActive = false;
+            else if (i+1 < cols && j+1 < rows && !screen[i+1][j+1].isActive) { // TODO
+                screen[i+1][j+1] = sand(currSand);
+                screen[i][j].isActive = false;
             }
             // else, leave it be
         }
@@ -180,11 +168,10 @@ void updateSand() {
 
 
 // Assumes valid x, y coordinates
-bool createNewSand(int x, int y, Color *c) {
+bool createNewSand(int i, int j, Color *c) {
     // Sand already exists
-    cout << x << "\t" << y << endl;
-    if (screen[x][y].isActive) return false;
-    screen[x][y] = sand(c);
+    if (screen[i][j].isActive) return false;
+    screen[i][j] = sand(c);
     return true;
 }
 
@@ -215,7 +202,7 @@ int main(int argc, char *args[]) {
             if (renderer == NULL)
                 cout << "Renderer Creation Error: " << SDL_GetError() << endl;
             else {
-                SDL_RenderSetLogicalSize(renderer, rows, cols);
+                SDL_RenderSetLogicalSize(renderer, cols, rows);
                 // start game loop if not errors
                 gameLoop(window, renderer);
             }

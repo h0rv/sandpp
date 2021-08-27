@@ -1,7 +1,7 @@
 // Make sure widths and height is divisible by ratio
 #define SCREEN_WIDTH  640
-#define SCREEN_HEIGHT 480
-#define PIXEL_RATIO   2
+#define SCREEN_HEIGHT 480 
+#define PIXEL_RATIO   4
 
 struct Color {
     unsigned char R, G, B;
@@ -35,5 +35,5 @@ Color colors[5] = {
 };
 const unsigned char numColors = 5;
 
-const int rows = SCREEN_WIDTH/PIXEL_RATIO;
-const int cols = SCREEN_HEIGHT/PIXEL_RATIO;
+const int rows = SCREEN_HEIGHT/PIXEL_RATIO;
+const int cols = SCREEN_WIDTH/PIXEL_RATIO;
