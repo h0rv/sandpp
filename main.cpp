@@ -1,14 +1,16 @@
 #include "globals.cpp"
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <stdlib.h>     
 #include <vector>
 using namespace std;
 
 
 void checkKeyDown(SDL_Keycode key);
-bool checkMouseButtonDown(char button);
-bool createNewSand(int x, int y, Color *c);
+bool createNewSand(int x, int y);
+void deleteSand(int i, int j);
 void updateSand();
+Color * getRandomColor();
 void drawSand(SDL_Renderer *renderer);
 void drawRendererBackground(SDL_Renderer *renderer);
 
@@ -20,13 +22,13 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
     int mouseX = 0, mouseY = 0;
     float frameTime = 0, deltaTime = 0;
     int prevTime = 0, currTime = 0;
-    unsigned char currColorIndex = 0;
 
     cout << rows << "\t" << cols << endl;
 
     SDL_Event event;
     bool close = false;
     bool isLeftMouseDown = false;
+    bool isRightMouseDown = false;
     while (!close) {
         prevTime = currTime;
         currTime = SDL_GetTicks();
@@ -44,10 +46,20 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
                     // cout << mouseX << "\t" << mouseY << endl;
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    isLeftMouseDown = checkMouseButtonDown(event.button.button);
+                    switch (event.button.button) {
+                        case SDL_BUTTON_LEFT:
+                            cout << "Mouse Left" << endl;
+                            isLeftMouseDown = true;
+                            break;
+                        case SDL_BUTTON_RIGHT:
+                            cout << "Mouse Right" << endl;
+                            isRightMouseDown = true;
+                            break;
+                    }
                     break;
                 case SDL_MOUSEBUTTONUP:
                     isLeftMouseDown = false;
+                    isRightMouseDown = false;
                     break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
@@ -59,25 +71,23 @@ void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
                             break;
                         case SDLK_LEFT:
                             cout << "Left" << endl;
-                            if (currColorIndex == 0) currColorIndex = numColors-1;
-                            else currColorIndex--;
                             break;
                         case SDLK_RIGHT:
                             cout << "Right" << endl;
-                            if (currColorIndex+1 == numColors) currColorIndex = 0;
-                            else currColorIndex++;
                             break;
                     }
                     break;
             }
 
             if (isLeftMouseDown) {
-                createNewSand(mouseX, mouseY, &colors[currColorIndex]);
+                createNewSand(mouseX, mouseY); 
+            } else if (isRightMouseDown) {
+                deleteSand(mouseX, mouseY);
             }
         }
 
         frameTime += deltaTime;
-        if (frameTime >= .025f){
+        if (frameTime >= .020f){
             frameTime = 0;
 
             updateSand();
@@ -101,6 +111,25 @@ void drawSand(SDL_Renderer *renderer) {
             }
         }
     }
+}
+
+
+// Assumes valid x, y coordinates
+bool createNewSand(int i, int j) {
+    // Sand already exists
+    if (screen[i][j].isActive) return false;
+    screen[i][j] = sand(getRandomColor());
+    return true;
+}
+
+// Delete coordinate given and one below
+void deleteSand(int i, int j) {
+                    screen[i][j].isActive = false;   // middle
+    /* if (0 < j-1)    screen[i][j-1].isActive = false; // left */
+    /* if (j+1 < rows) screen[i][j+1].isActive = false; // right */
+    /* if (0 < i-1)    screen[i-1][j].isActive = false; // above */
+    if (i+1 < cols) screen[i+1][j].isActive = false; // below
+
 }
 
 
@@ -130,19 +159,14 @@ void updateSand() {
         }
     }
 }
-
-
-// Assumes valid x, y coordinates
-bool createNewSand(int i, int j, Color *c) {
-    // Sand already exists
-    if (screen[i][j].isActive) return false;
-    screen[i][j] = sand(c);
-    return true;
-}
-
 void drawRendererBackground(SDL_Renderer *renderer) {
     SDL_SetRenderDrawColor(renderer, bg.R, bg.G, bg.B, 255);
     SDL_RenderClear(renderer);
+}
+
+
+Color * getRandomColor() {
+    return &colors[rand() % numColors];
 }
 
 
@@ -161,22 +185,6 @@ void checkKeyDown(SDL_Keycode key) {
             cout << "Right" << endl;
             break;
     }
-}
-
-
-// Handles mouse button events.
-// Returns true if left mouse is down
-bool checkMouseButtonDown(char button) {
-    switch (button) {
-        case SDL_BUTTON_LEFT:
-            cout << "Mouse Left" << endl;
-            return true;
-            break;
-        case SDL_BUTTON_RIGHT:
-            cout << "Mouse Right" << endl;
-            break;
-    }
-    return false;
 }
 
 
