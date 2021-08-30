@@ -13,4 +13,4 @@ $ ./main
 
 ### Controls
  
-Left mouse to create sand; right mouse to delete sand.
+Left mouse to create sand; right mouse to delete.
