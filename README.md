@@ -10,3 +10,7 @@ C++ physics sand pixel simulator. Inspired by the video game Noita. Utilizes the
 $ ./compile.sh
 $ ./main
 ```
+
+### Controls
+ 
+Left mouse to create sand; right mouse to delete sand.
