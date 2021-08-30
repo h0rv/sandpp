@@ -1,7 +1,7 @@
+#include "globals.cpp"
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <vector>
-#include "globals.cpp"
 using namespace std;
 
 
@@ -15,8 +15,6 @@ void drawRendererBackground(SDL_Renderer *renderer);
 
 // Screen array
 sand screen[cols][rows]; 
-
-
 
 void gameLoop(SDL_Window *window, SDL_Renderer *renderer) {
     int mouseX = 0, mouseY = 0;
@@ -114,7 +112,7 @@ void updateSand() {
             if (!currSand.isActive) continue;
             // if no sand below, go down
             // else if (j+1 < cols && !screen[i][j+1].isActive) { // TODO
-            else if (j+1 < rows && !screen[i][j+1].isActive) { // TODO
+            if (j+1 < rows && !screen[i][j+1].isActive) { // TODO
                 screen[i][j+1] = sand(currSand);
                 screen[i][j].isActive = false;
             }

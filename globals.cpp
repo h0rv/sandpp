@@ -1,7 +1,7 @@
 // Make sure widths and height is divisible by ratio
 #define SCREEN_WIDTH  640
 #define SCREEN_HEIGHT 480 
-#define PIXEL_RATIO   4
+#define PIXEL_RATIO   2
 
 struct Color {
     unsigned char R, G, B;
